@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Timeline</title>
+  <script src="./cities.top100.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+  <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css" />
+  <link rel="stylesheet" href="./this.css" />
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <script src="https://unpkg.com/spacetime"></script>
+</head>
+
+<body>
+<div id="app">
+
+<section class="section">
+<div>
+  <multiselect
+    v-model="selectedCities"
+    placeholder="city name?"
+    label="city" track-by="city_ascii"
+    :options="options"
+    :multiple="true"
+    :taggable="true"
+  ></multiselect>
+</div>
+</section>
+
+<section class="section">
+<div class="tile is-ancestor">
+
+  <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline">
+    <div class="tile is-child box">
+      <p>{{ city.city}}</p>
+    </div>
+    <div class="tile is-child box" v-for="time in city.timeline">
+      <p>{{ time }}</p>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<section class="section">
+  <pre class="language-json"><code>{{ spaceDate }}</code></pre>
+  <pre class="language-json"><code>{{ spaceDate.format('nice') }}</code></pre>
+  <pre class="language-json"><code>{{ aDay }}</code></pre>
+</section>
+
+<section class="section">
+  <pre class="language-json"><code>{{ selectedCities  }}</code></pre>
+</section>
+
+<section class="section">
+  <pre class="language-json"><code>{{ citiesWithTimeline }}</code></pre>
+</section>
+
+
+</div>
+</body>
+
+
+<script>
+
+st = spacetime.now().nearest('hour')
+
+let createTimeline = (spaceTimeInstance, timeZone, daysToCreate) => {
+  spaceTimeInstance = spaceTimeInstance.goto(timeZone);
+
+  let timeline = [...Array(daysToCreate)].map((_, i) => {
+    spaceTimeInstance = spaceTimeInstance.add(1, 'hour')
+    return spaceTimeInstance.format('nice')
+    //console.log(i, spaceTimeInstance.format('nice'))
+  })
+
+  return timeline
+};
+
+
+let el = createTimeline(st, 'Europe/London', 30)
+let at = createTimeline(st, 'Asia/Tokyo', 30)
+let al = createTimeline(st, 'America/Los_Angeles', 30)
+
+console.log(el, at, al)
+
+
+var vm = new Vue({
+  el: '#app',
+  components: { Multiselect: window.VueMultiselect.default },
+  data () {
+    return {
+      message: "Hello!",
+      spaceDate: st,
+      aDay: { 
+        year: st.year(),
+        month: st.month(),
+        formatMonth: st.format('month'),
+        day: st.day(),
+        dayName: st.dayName()
+      },
+      selectedCities: [],
+      //selectedCitiesWithOffset: [],
+      options: cities
+    }
+  },
+  computed: {
+    selectedCitiesWithTimeline: function () {
+      return this.selectedCities.map((city) => {
+        city.timeline = createTimeline(st, city.timezone, 10)
+        return city
+      })
+    }
+  },
+  methods: {
+  }
+})
+
+
+</script>
+
+
