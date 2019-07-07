@@ -34,10 +34,14 @@
 
   <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline">
     <div class="tile is-child box">
-      <p>{{ city.city}}</p>
+      <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/48.png'">
+    </div>
+    <div class="tile is-child box">
+      <span>{{ city.city }}</span>
     </div>
     <div class="tile is-child box" v-for="time in city.timeline">
-      <p>{{ time }}</p>
+      <p>{{ time.monthShort }} {{ time.day }}</p>
+      <p>{{ time.hour }}{{ time.ampm }}</p>
     </div>
   </div>
 
@@ -54,11 +58,6 @@
   <pre class="language-json"><code>{{ selectedCities  }}</code></pre>
 </section>
 
-<section class="section">
-  <pre class="language-json"><code>{{ citiesWithTimeline }}</code></pre>
-</section>
-
-
 </div>
 </body>
 
@@ -68,11 +67,20 @@
 st = spacetime.now().nearest('hour')
 
 let createTimeline = (spaceTimeInstance, timeZone, daysToCreate) => {
-  spaceTimeInstance = spaceTimeInstance.goto(timeZone);
+  spi = spaceTimeInstance.goto(timeZone);
 
   let timeline = [...Array(daysToCreate)].map((_, i) => {
-    spaceTimeInstance = spaceTimeInstance.add(1, 'hour')
-    return spaceTimeInstance.format('nice')
+    let aDay = {
+      year: spi.format('year'),
+      monthShort: spi.format('month-short'),
+      dayOfTheWeekShort: spi.format('day-short'),
+      day: spi.format('date'),
+      hour: spi.format('hour'),
+      ampm: spi.format('{ampm}')
+    }
+    spi = spi.add(1, 'hour')
+    return aDay
+    //return spi.format('nice')
     //console.log(i, spaceTimeInstance.format('nice'))
   })
 
