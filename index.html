@@ -43,7 +43,8 @@
 <section class="section">
 <div class="tile is-ancestor">
 
-  <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline">
+  <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)">
+<!--  <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTL" @click="select(city.city)"> -->
 
     <div class="card-content">
       <div class="media">
@@ -59,9 +60,8 @@
       </div>
     </div>
 
-    <div class="tile is-child box" v-for="time in city.timeline">
-      <p>{{ time.monthShort }} {{ time.day }}</p>
-      <p>{{ time.hour }}{{ time.ampm }}</p>
+    <div class="tile is-child box" v-for="time in city.timeline" @click="selectTimes(time.no)">
+      <p>{{ time.monthShort }} {{ time.day }} {{ time.hour }}{{ time.ampm }} {{ time.selected }}</p>
     </div>
   </div>
 
@@ -71,7 +71,6 @@
 <section class="section">
   <pre class="language-json"><code>{{ spaceDate }}</code></pre>
   <pre class="language-json"><code>{{ spaceDate.format('nice') }}</code></pre>
-  <pre class="language-json"><code>{{ aDay }}</code></pre>
 </section>
 
 <section class="section">
@@ -97,7 +96,8 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate) => {
       dayOfTheWeekShort: spi.format('day-short'),
       day: spi.format('date'),
       hour: spi.format('hour'),
-      ampm: spi.format('{ampm}')
+      ampm: spi.format('{ampm}'),
+      selected: false
     }
     spi = spi.add(1, 'hour')
     return aDay
@@ -108,12 +108,13 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate) => {
   return timeline
 };
 
-
+/*
 let el = createTimeline(st, 'Europe/London', 30)
 let at = createTimeline(st, 'Asia/Tokyo', 30)
 let al = createTimeline(st, 'America/Los_Angeles', 30)
 
 console.log(el, at, al)
+*/
 
 
 var vm = new Vue({
@@ -123,15 +124,8 @@ var vm = new Vue({
     return {
       message: "Hello!",
       spaceDate: st,
-      aDay: { 
-        year: st.year(),
-        month: st.month(),
-        formatMonth: st.format('month'),
-        day: st.day(),
-        dayName: st.dayName()
-      },
       selectedCities: [],
-      //selectedCitiesWithOffset: [],
+      selectedTimeNo: 0,
       options: cities
     }
   },
@@ -144,6 +138,29 @@ var vm = new Vue({
     }
   },
   methods: {
+    select: function (itemname) {
+      //console.log(itemname)
+    },
+    selectTimes: function (no) {
+      this.selectedCitiesWithTimeline.forEach(function(city) {
+        console.log(city.city, city.timeline[no].hour)
+
+/*
+      let newValue = {
+        "no": no,
+        "year": "2019",
+        "monthShort": "Jul",
+        "dayOfTheWeekShort": "Sat",
+        "day": "20",
+        "hour": "10",
+        "ampm": "am",
+        "selected": true
+      }
+*/
+
+      })
+
+    }
   }
 })
 

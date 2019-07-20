@@ -19,3 +19,11 @@ body {
 .multiselect__tags {
     font-size: 18px;
 }
+
+.tile.is-parent {
+  padding: 0.1rem;
+}
+
+.tile.is-vertical > .tile.is-child:not(:last-child) {
+  margin-bottom: 0rem !important;
+}
