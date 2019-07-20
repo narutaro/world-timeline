@@ -11,9 +11,20 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://unpkg.com/spacetime"></script>
+  <link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
 </head>
 
-<body>
+
+<style>
+.underTheEarth {
+  background-image: -webkit-radial-gradient(50% 150%, #787B7D 5%, #4B5052 100%);
+  background-image: radial-gradient(50% 150%, #787B7D 5%, #4B5052 100%); }
+.milkyWay {
+  background-image: -webkit-linear-gradient(bottom, #F4F4F4 0%, #DFDEDC 100%);
+  background-image: linear-gradient(to top, #F4F4F4 0%, #DFDEDC 100%); }
+</style>
+
+<body class="milkyWay">
 <div id="app">
 
 <section class="section">
@@ -33,12 +44,21 @@
 <div class="tile is-ancestor">
 
   <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline">
-    <div class="tile is-child box">
-      <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/48.png'">
+
+    <div class="card-content">
+      <div class="media">
+        <div class="media-left">
+          <figure class="image">
+            <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/48.png'">
+          </figure>
+        </div>
+        <div class="media-content">
+          <p class="title is-5">{{ city.city }}</p>
+          <p class="subtitle is-6">{{ city.country }}</p>
+        </div>
+      </div>
     </div>
-    <div class="tile is-child box">
-      <span>{{ city.city }}</span>
-    </div>
+
     <div class="tile is-child box" v-for="time in city.timeline">
       <p>{{ time.monthShort }} {{ time.day }}</p>
       <p>{{ time.hour }}{{ time.ampm }}</p>
@@ -71,6 +91,7 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate) => {
 
   let timeline = [...Array(daysToCreate)].map((_, i) => {
     let aDay = {
+      no: i,
       year: spi.format('year'),
       monthShort: spi.format('month-short'),
       dayOfTheWeekShort: spi.format('day-short'),
