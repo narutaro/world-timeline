@@ -125,7 +125,6 @@ var vm = new Vue({
       message: "Hello!",
       spaceDate: st,
       selectedCities: [],
-      selectedTimeNo: 0,
       options: cities
     }
   },
@@ -144,22 +143,7 @@ var vm = new Vue({
     selectTimes: function (no) {
       this.selectedCitiesWithTimeline.forEach(function(city) {
         console.log(city.city, city.timeline[no].hour)
-
-/*
-      let newValue = {
-        "no": no,
-        "year": "2019",
-        "monthShort": "Jul",
-        "dayOfTheWeekShort": "Sat",
-        "day": "20",
-        "hour": "10",
-        "ampm": "am",
-        "selected": true
-      }
-*/
-
       })
-
     }
   }
 })
