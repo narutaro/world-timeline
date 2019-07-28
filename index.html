@@ -61,8 +61,10 @@
     </div>
 
     <div class="tile is-child box" v-for="time in city.timeline" @click="selectTimes(time.no)">
-      <p>{{ time.monthShort }} {{ time.day }} {{ time.hour }}{{ time.ampm }} {{ time.selected }}</p>
+      <p style="text-align: left; float: left">{{ time.monthShort }} {{ time.day }} {{ time.hour }}{{ time.ampm }} {{ time.selected }}</p><p style="text-align: right"><i class="far fa-calendar-check"></i></p>
+
     </div>
+
 
   </div>
 
