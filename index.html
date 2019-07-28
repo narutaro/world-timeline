@@ -44,7 +44,7 @@
 <div class="tile is-ancestor">
 
   <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)">
-<!--  <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTL" @click="select(city.city)"> -->
+  <!-- <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)"> -->
 
     <div class="card-content">
       <div class="media">
@@ -63,19 +63,34 @@
     <div class="tile is-child box" v-for="time in city.timeline" @click="selectTimes(time.no)">
       <p>{{ time.monthShort }} {{ time.day }} {{ time.hour }}{{ time.ampm }} {{ time.selected }}</p>
     </div>
+
   </div>
 
 </div>
 </section>
 
+<!--
 <section class="section">
   <pre class="language-json"><code>{{ spaceDate }}</code></pre>
   <pre class="language-json"><code>{{ spaceDate.format('nice') }}</code></pre>
 </section>
+-->
 
 <section class="section">
+  <p class="title">selectedCities</p>
+  <pre class="language-json"><code>{{ selectedCities }}</code></pre>
+</section>
+<section class="section">
+  <p class="title">selectedCitiesWithTimeline</p>
+  <pre class="language-json"><code>{{ selectedCitiesWithTimeline }}</code></pre>
+</section>
+
+<!--
+<section class="section">
+  <p class="title">selectedCitiesWithTimelineClone</p>
   <pre class="language-json"><code>{{ selectedCities  }}</code></pre>
 </section>
+-->
 
 </div>
 </body>
@@ -85,7 +100,7 @@
 
 st = spacetime.now().nearest('hour')
 
-let createTimeline = (spaceTimeInstance, timeZone, daysToCreate) => {
+let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo) => {
   spi = spaceTimeInstance.goto(timeZone);
 
   let timeline = [...Array(daysToCreate)].map((_, i) => {
@@ -97,7 +112,8 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate) => {
       day: spi.format('date'),
       hour: spi.format('hour'),
       ampm: spi.format('{ampm}'),
-      selected: false
+      // 変数 = 条件式 ? trueの時の値 : falseの時の値 
+      selected: selectedTimeNo.includes(i) ? true : false
     }
     spi = spi.add(1, 'hour')
     return aDay
@@ -125,26 +141,45 @@ var vm = new Vue({
       message: "Hello!",
       spaceDate: st,
       selectedCities: [],
-      options: cities
+      options: cities,
+      selectedTime: []
     }
   },
   computed: {
     selectedCitiesWithTimeline: function () {
-      return this.selectedCities.map((city) => {
-        city.timeline = createTimeline(st, city.timezone, 10)
+      let scwt = this.selectedCities.map((city) => {
+        city.timeline = createTimeline(st, city.timezone, 10, this.selectedTime)
         return city
       })
+      return scwt
     }
   },
   methods: {
     select: function (itemname) {
       //console.log(itemname)
     },
-    selectTimes: function (no) {
+    selectTimes: function (timeId) {
       this.selectedCitiesWithTimeline.forEach(function(city) {
-        console.log(city.city, city.timeline[no].hour)
+        console.log(city.city, city.timeline[timeId].hour)
       })
-    }
+      //this.selectedTime.push(timeId)
+      this.toggleSelectedTime(timeId)
+
+/*
+let index = array.indexOf(item);
+// delete
+if (index !== -1) array.splice(index, 1);
+*/
+
+    },
+    toggleSelectedTime: function (timeId) {
+      let index = this.selectedTime.indexOf(timeId)
+      if (index !== -1) {
+        this.selectedTime.splice(index, 1) 
+      } else {
+        this.selectedTime.push(timeId)
+      }
+    },
   }
 })
 
