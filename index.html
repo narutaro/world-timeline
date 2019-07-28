@@ -44,7 +44,6 @@
 <div class="tile is-ancestor">
 
   <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)">
-  <!-- <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)"> -->
 
     <div class="card-content">
       <div class="media">
@@ -61,7 +60,8 @@
     </div>
 
     <div class="tile is-child box" v-for="time in city.timeline" @click="selectTimes(time.no)">
-      <p style="text-align: left; float: left">{{ time.monthShort }} {{ time.day }} {{ time.hour }}{{ time.ampm }} {{ time.selected }}</p><p style="text-align: right"><i class="far fa-calendar-check"></i></p>
+      <p style="text-align: left; float: left">{{ time.monthShort }} {{ time.day }} {{ time.hour }}{{ time.ampm }} {{ time.selected }}</p>
+      <p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p>
 
     </div>
 
