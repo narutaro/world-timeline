@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css" />
   <link rel="stylesheet" href="./this.css" />
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!--  <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://unpkg.com/spacetime"></script>
   <link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
@@ -178,7 +178,8 @@ var vm = new Vue({
       selectedCities: [],
       options: cities,
       selectedTime: [],
-      meetings: {}
+      meetings: [],
+      meetingsByNo: []
     }
   },
   computed: {
@@ -212,9 +213,18 @@ var vm = new Vue({
     },
     copyMeetings: function () {
       this.selectedCitiesWithTimeline.map(function(city){
-        vm.meetings[city.city] = city.timeline.filter(time => time.selected == true)
+        city.timeline.filter(time => time.selected == true).map(function(date){
+          date['city'] = city.city 
+          vm.meetings.splice(0, 0, date)
+        })
       })
       console.log(this.meetings)
+      this.formatMeetings(this.meetings)
+    },
+    formatMeetings: function(meetings) {
+      // group by times
+      const nos = [...new Set(meetings.map(date => date.no))]
+      console.log(nos)
     }
   }
 })
