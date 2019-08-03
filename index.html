@@ -40,6 +40,42 @@
 </div>
 </section>
 
+
+<section class="section">
+<div class="field has-addons is-pulled-left" style="">
+  <p class="control">
+    <a class="button" @click="copyMeetings()">
+      <span class="icon is-small">
+        <i class="fas fa-clipboard"></i>
+      </span>
+      <span>Copy</span>
+    </a>
+  </p>
+  <p class="control">
+    <a class="button">
+      <span class="icon is-small">
+        <i class="fas fa-italic"></i>
+      </span>
+      <span>Italic</span>
+    </a>
+  </p>
+  <p class="control">
+    <a class="button">
+      <span class="icon is-small">
+        <i class="fas fa-underline"></i>
+      </span>
+      <span>Underline</span>
+    </a>
+  </p>
+</div>
+
+<div class="buttons has-addons is-pulled-right">
+  <span class="button">1h</span>
+  <span class="button">30min</span>
+  <span class="button is-danger is-selected">15min</span>
+</div>
+</section>
+
 <section class="section">
 <div class="tile is-ancestor">
 
@@ -79,6 +115,10 @@
 -->
 
 <section class="section">
+  <p class="title">meetings</p>
+  <pre class="language-json"><code>{{ meetings }}</code></pre>
+</section>
+<section class="section">
   <p class="title">selectedCities</p>
   <pre class="language-json"><code>{{ selectedCities }}</code></pre>
 </section>
@@ -86,13 +126,6 @@
   <p class="title">selectedCitiesWithTimeline</p>
   <pre class="language-json"><code>{{ selectedCitiesWithTimeline }}</code></pre>
 </section>
-
-<!--
-<section class="section">
-  <p class="title">selectedCitiesWithTimelineClone</p>
-  <pre class="language-json"><code>{{ selectedCities  }}</code></pre>
-</section>
--->
 
 </div>
 </body>
@@ -144,17 +177,19 @@ var vm = new Vue({
       spaceDate: st,
       selectedCities: [],
       options: cities,
-      selectedTime: []
+      selectedTime: [],
+      meetings: {}
     }
   },
   computed: {
     selectedCitiesWithTimeline: function () {
-      let scwt = this.selectedCities.map((city) => {
+      //let scwt = this.selectedCities.map((city) => {
+      return this.selectedCities.map((city) => {
         city.timeline = createTimeline(st, city.timezone, 10, this.selectedTime)
         return city
       })
-      return scwt
-    }
+      //return scwt
+    },
   },
   methods: {
     select: function (itemname) {
@@ -166,13 +201,6 @@ var vm = new Vue({
       })
       //this.selectedTime.push(timeId)
       this.toggleSelectedTime(timeId)
-
-/*
-let index = array.indexOf(item);
-// delete
-if (index !== -1) array.splice(index, 1);
-*/
-
     },
     toggleSelectedTime: function (timeId) {
       let index = this.selectedTime.indexOf(timeId)
@@ -182,6 +210,12 @@ if (index !== -1) array.splice(index, 1);
         this.selectedTime.push(timeId)
       }
     },
+    copyMeetings: function () {
+      this.selectedCitiesWithTimeline.map(function(city){
+        vm.meetings[city.city] = city.timeline.filter(time => time.selected == true)
+      })
+      console.log(this.meetings)
+    }
   }
 })
 
