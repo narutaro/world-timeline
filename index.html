@@ -119,6 +119,10 @@
   <pre class="language-json"><code>{{ meetings }}</code></pre>
 </section>
 <section class="section">
+  <p class="title">meetingsByNo</p>
+  <pre class="language-json"><code>{{ meetingsByNo }}</code></pre>
+</section>
+<section class="section">
   <p class="title">selectedCities</p>
   <pre class="language-json"><code>{{ selectedCities }}</code></pre>
 </section>
@@ -137,7 +141,6 @@ st = spacetime.now().nearest('hour')
 
 let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo) => {
   spi = spaceTimeInstance.goto(timeZone);
-
   let timeline = [...Array(daysToCreate)].map((_, i) => {
     let aDay = {
       no: i,
@@ -147,7 +150,6 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo)
       day: spi.format('date'),
       hour: spi.format('hour'),
       ampm: spi.format('{ampm}'),
-      // 変数 = 条件式 ? trueの時の値 : falseの時の値 
       selected: selectedTimeNo.includes(i) ? true : false
     }
     spi = spi.add(1, 'hour')
@@ -155,7 +157,6 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo)
     //return spi.format('nice')
     //console.log(i, spaceTimeInstance.format('nice'))
   })
-
   return timeline
 };
 
@@ -179,7 +180,7 @@ var vm = new Vue({
       options: cities,
       selectedTime: [],
       meetings: [],
-      meetingsByNo: []
+      meetingsByNo: {}
     }
   },
   computed: {
@@ -212,19 +213,28 @@ var vm = new Vue({
       }
     },
     copyMeetings: function () {
+      this.meetings.length = 0
       this.selectedCitiesWithTimeline.map(function(city){
         city.timeline.filter(time => time.selected == true).map(function(date){
           date['city'] = city.city 
+          date['country'] = city.country 
+          date['iso2'] = city.iso2
           vm.meetings.splice(0, 0, date)
         })
       })
-      console.log(this.meetings)
+      //console.log(this.meetings)
       this.formatMeetings(this.meetings)
+      //console.log(this.meetingsByNo)
     },
     formatMeetings: function(meetings) {
-      // group by times
+      // group by time_number
       const nos = [...new Set(meetings.map(date => date.no))]
-      console.log(nos)
+      //console.log(nos)
+      //nos.map(x => console.log(x))
+      nos.map(function(i) {
+        let dates = vm.meetings.filter(date => i == date.no)
+        vm.meetingsByNo[i] = dates 
+      })
     }
   }
 })
