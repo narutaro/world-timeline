@@ -7,11 +7,11 @@
   <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
   <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css" />
-  <link rel="stylesheet" href="./this.css" />
 <!--  <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://unpkg.com/spacetime"></script>
   <link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./this.css" />
 </head>
 
 
@@ -25,7 +25,11 @@
 </style>
 
 <body class="milkyWay">
+
+
+
 <div id="app">
+
 
 <section class="section">
 <div>
@@ -77,6 +81,47 @@
 </section>
 
 <section class="section">
+  <p class="title">Meeting candidates</p>
+  <table class="table is-narrow">
+<!--
+    <thead>
+      <tr v-for="cand in meetingsByNo">
+        <th v-for="city in cand">
+          <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/24.png'">
+        </th>
+      </tr>
+    </thead>
+-->
+    <tbody>
+      <tr v-for="(opt, idx) in meetingsByNo">
+        <td style="vertical-align: middle;">Option {{ idx+1 }}</td>
+        <td v-for="city in opt">
+
+    <div class="card-content">
+      <div class="media">
+        <div class="media-left">
+          <figure class="image">
+            <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/48.png'">
+          </figure>
+        </div>
+        <div class="media-content">
+<!--
+          <p class="title is-5">{{ city.city }}</p>
+          <p class="subtitle is-6"> {{ city.monthShort }} {{ city.day }} {{ city.hour }}{{ city.ampm }}</p>
+-->
+          <p>{{ city.city }}</p>
+          <p>{{ city.monthShort }} {{ city.day }} {{ city.hour }}{{ city.ampm }}</p>
+        </div>
+      </div>
+    </div>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section">
 <div class="tile is-ancestor">
 
   <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)">
@@ -100,9 +145,6 @@
       <p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p>
 
     </div>
-
-
-  </div>
 
 </div>
 </section>
@@ -132,6 +174,16 @@
 </section>
 
 </div>
+
+</div>
+
+  <div class="fab">+</div>
+
+<footer class="footer">
+  <p>AAAAAAAAAA</p>
+  <div class="fab">+</div>
+</footer>
+
 </body>
 
 
@@ -180,7 +232,7 @@ var vm = new Vue({
       options: cities,
       selectedTime: [],
       meetings: [],
-      meetingsByNo: {}
+      meetingsByNo: []
     }
   },
   computed: {
@@ -229,11 +281,9 @@ var vm = new Vue({
     formatMeetings: function(meetings) {
       // group by time_number
       const nos = [...new Set(meetings.map(date => date.no))]
-      //console.log(nos)
-      //nos.map(x => console.log(x))
       nos.map(function(i) {
         let dates = vm.meetings.filter(date => i == date.no)
-        vm.meetingsByNo[i] = dates 
+        vm.meetingsByNo.push(dates)
       })
     }
   }
@@ -241,5 +291,6 @@ var vm = new Vue({
 
 
 </script>
+
 
 
