@@ -15,6 +15,7 @@
 </head>
 
 
+<!--
 <style>
 .underTheEarth {
   background-image: -webkit-radial-gradient(50% 150%, #787B7D 5%, #4B5052 100%);
@@ -23,62 +24,45 @@
   background-image: -webkit-linear-gradient(bottom, #F4F4F4 0%, #DFDEDC 100%);
   background-image: linear-gradient(to top, #F4F4F4 0%, #DFDEDC 100%); }
 </style>
+-->
 
-<body class="milkyWay">
+<!-- <body class="milkyWay"> -->
+<body>
 
 
 
 <div id="app">
 
-
-<section class="section">
-<div>
-  <multiselect
-    v-model="selectedCities"
-    placeholder="city name?"
-    label="city" track-by="city_ascii"
-    :options="options"
-    :multiple="true"
-    :taggable="true"
-  ></multiselect>
+<div class="hero is-large is-dark has-background">
+  <img class="hero-background is-transparent" src="https://source.unsplash.com/random/?landmark,city" />
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-vcentered">
+        <div class="column">
+          <h1 class="title">World Timeline</h1>
+          <h3 class="subtitle" style="margin-bottom: 30px">Arranging a meeting in the world</h3>
+        </div>
+        <div class="column">
+          <div class="buttons has-addons is-pulled-right">
+            <span class="button">1h</span>
+            <span class="button">30min</span>
+            <span class="button is-danger is-selected">15min</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <multiselect
+        v-model="selectedCities"
+        placeholder="city name?"
+        label="city" track-by="city_ascii"
+        :options="options"
+        :multiple="true"
+        :taggable="true"
+      ></multiselect>
+    </div>
+  </div>
 </div>
-</section>
-
-
-<section class="section">
-<div class="field has-addons is-pulled-left" style="">
-  <p class="control">
-    <a class="button" @click="copyMeetings()">
-      <span class="icon is-small">
-        <i class="fas fa-clipboard"></i>
-      </span>
-      <span>Copy</span>
-    </a>
-  </p>
-  <p class="control">
-    <a class="button">
-      <span class="icon is-small">
-        <i class="fas fa-italic"></i>
-      </span>
-      <span>Italic</span>
-    </a>
-  </p>
-  <p class="control">
-    <a class="button">
-      <span class="icon is-small">
-        <i class="fas fa-underline"></i>
-      </span>
-      <span>Underline</span>
-    </a>
-  </p>
-</div>
-
-<div class="buttons has-addons is-pulled-right">
-  <span class="button">1h</span>
-  <span class="button">30min</span>
-  <span class="button is-danger is-selected">15min</span>
-</div>
-</section>
 
 <section class="section">
   <p class="title">Meeting candidates</p>
@@ -173,16 +157,15 @@
   <pre class="language-json"><code>{{ selectedCitiesWithTimeline }}</code></pre>
 </section>
 
-</div>
+
+
+
+<a class="fabtn" @click="copyMeetings">
+    <i class="far fa-calendar-check"></i>
+</a>
 
 </div>
 
-  <div class="fab">+</div>
-
-<footer class="footer">
-  <p>AAAAAAAAAA</p>
-  <div class="fab">+</div>
-</footer>
 
 </body>
 
