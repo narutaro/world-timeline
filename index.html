@@ -65,6 +65,34 @@
 </div>
 
 <section class="section">
+<div class="tile is-ancestor">
+
+  <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)">
+
+    <div class="card-content">
+      <div class="media">
+        <div class="media-left">
+          <figure class="image">
+            <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/48.png'">
+          </figure>
+        </div>
+        <div class="media-content">
+          <p class="title is-5">{{ city.city }}</p>
+          <p class="subtitle is-6">{{ city.country }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tile is-child box" v-for="time in city.timeline" @click="selectTimes(time.no)">
+      <p style="text-align: left; float: left">{{ time.monthShort }} {{ time.day }} {{ time.hour }}{{ time.ampm }}</p>
+      <p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p>
+
+    </div>
+
+</div>
+</section>
+
+<section class="section">
   <p class="title">Meeting candidates</p>
   <table class="table is-narrow">
 <!--
@@ -103,34 +131,6 @@
       </tr>
     </tbody>
   </table>
-</section>
-
-<section class="section">
-<div class="tile is-ancestor">
-
-  <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)">
-
-    <div class="card-content">
-      <div class="media">
-        <div class="media-left">
-          <figure class="image">
-            <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/48.png'">
-          </figure>
-        </div>
-        <div class="media-content">
-          <p class="title is-5">{{ city.city }}</p>
-          <p class="subtitle is-6">{{ city.country }}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="tile is-child box" v-for="time in city.timeline" @click="selectTimes(time.no)">
-      <p style="text-align: left; float: left">{{ time.monthShort }} {{ time.day }} {{ time.hour }}{{ time.ampm }} {{ time.selected }}</p>
-      <p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p>
-
-    </div>
-
-</div>
 </section>
 
 <!--
@@ -220,12 +220,10 @@ var vm = new Vue({
   },
   computed: {
     selectedCitiesWithTimeline: function () {
-      //let scwt = this.selectedCities.map((city) => {
       return this.selectedCities.map((city) => {
         city.timeline = createTimeline(st, city.timezone, 10, this.selectedTime)
         return city
       })
-      //return scwt
     },
   },
   methods: {
@@ -248,7 +246,9 @@ var vm = new Vue({
       }
     },
     copyMeetings: function () {
-      this.meetings.length = 0
+      this.meetings.splice(0); // https://jp.vuejs.org/v2/guide/list.html
+      this.meetingsByNo.splice(0); // https://jp.vuejs.org/v2/guide/list.html
+
       this.selectedCitiesWithTimeline.map(function(city){
         city.timeline.filter(time => time.selected == true).map(function(date){
           date['city'] = city.city 
