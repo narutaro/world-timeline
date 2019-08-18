@@ -44,9 +44,9 @@
         </div>
         <div class="column">
           <div class="buttons has-addons is-pulled-right">
-            <span class="button">1h</span>
-            <span class="button">30min</span>
-            <span class="button is-danger is-selected">15min</span>
+            <span class="button" v-bind:class="intervals.one" @click="selectInterval('one')">1h</span>
+            <span class="button" v-bind:class="intervals.half" @click="selectInterval('half')">30min</span>
+            <span class="button" v-bind:class="intervals.quarter" @click="selectInterval('quarter')">15min</span>
           </div>
         </div>
       </div>
@@ -84,7 +84,8 @@
     </div>
 
     <div class="tile is-child box" v-for="time in city.timeline" @click="selectTimes(time.no)">
-      <p style="text-align: left; float: left">{{ time.monthShort }} {{ time.day }} {{ time.hour }}{{ time.ampm }}</p>
+      <!-- <p style="text-align: left; float: left">{{ time.monthShort }} {{ time.day }} {{ time.ftime }} {{time.fday}} {{time.fdate}} {{time.fnice}}</p> -->
+      <p style="text-align: left; float: left">{{ time.fnice }} {{ time.fday }}</p>
       <p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p>
 
     </div>
@@ -122,7 +123,8 @@
           <p class="subtitle is-6"> {{ city.monthShort }} {{ city.day }} {{ city.hour }}{{ city.ampm }}</p>
 -->
           <p>{{ city.city }}</p>
-          <p>{{ city.monthShort }} {{ city.day }} {{ city.hour }}{{ city.ampm }}</p>
+          <!-- <p>{{ city.monthShort }} {{ city.day }} {{ city.hour }}{{ city.ampm }}</p> -->
+          <p>{{ city.fnice }} {{ city.fday }}</p>
         </div>
       </div>
     </div>
@@ -172,9 +174,9 @@
 
 <script>
 
-st = spacetime.now().nearest('hour')
+st = spacetime.now().nearest('hour') // rounded to closest hour
 
-let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo) => {
+let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo, interval) => {
   spi = spaceTimeInstance.goto(timeZone);
   let timeline = [...Array(daysToCreate)].map((_, i) => {
     let aDay = {
@@ -185,9 +187,21 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo)
       day: spi.format('date'),
       hour: spi.format('hour'),
       ampm: spi.format('{ampm}'),
+      //ftime: spi.format('time'),
+      fday: spi.format('day-short'),
+      //fdate: spi.format('date-nice'),
+      fnice: spi.format('nice'),
       selected: selectedTimeNo.includes(i) ? true : false
     }
-    spi = spi.add(1, 'hour')
+    
+    if (interval === 'one') {
+      spi = spi.add(1, 'hour')
+    } else if (interval === 'half') {
+      spi = spi.add(30, 'minutes') 
+    } else if (interval === 'quarter') {
+      spi = spi.add(15, 'minutes')
+    }
+
     return aDay
     //return spi.format('nice')
     //console.log(i, spaceTimeInstance.format('nice'))
@@ -215,13 +229,19 @@ var vm = new Vue({
       options: cities,
       selectedTime: [],
       meetings: [],
-      meetingsByNo: []
+      meetingsByNo: [],
+      intervals: { 
+        currentInterval: "half",
+        one: { "is-selected is-danger": false },
+        half: { "is-selected is-danger": true },
+        quarter: { "is-selected is-danger": false }
+      }
     }
   },
   computed: {
     selectedCitiesWithTimeline: function () {
       return this.selectedCities.map((city) => {
-        city.timeline = createTimeline(st, city.timezone, 10, this.selectedTime)
+        city.timeline = createTimeline(st, city.timezone, 10, this.selectedTime, this.intervals.currentInterval)
         return city
       })
     },
@@ -268,12 +288,13 @@ var vm = new Vue({
         let dates = vm.meetings.filter(date => i == date.no)
         vm.meetingsByNo.push(dates)
       })
+    },
+    selectInterval: function(selectedInterval) {
+      this.intervals.currentInterval = selectedInterval
+      Object.keys(this.intervals).map((i) => this.intervals[i]["is-selected is-danger"] = selectedInterval === i ? true : false)
     }
   }
 })
 
 
 </script>
-
-
-
