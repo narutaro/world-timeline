@@ -22,6 +22,15 @@ body {
 }
 */
 
+/*
+.multiselect.valid .multiselect__tags,
+.multiselect.valid .multiselect__tags span,
+.multiselect.valid .multiselect__tags input {
+  background:red;
+}
+*/
+
+/*
 .multiselect__tag {
   background: hsl(348, 100%, 61%);
 }
@@ -34,6 +43,7 @@ body {
   background: hsl(0, 0%, 29%);
   color: #fff;
 }
+*/
 
 .multiselect__tags {
   font-size: 16px;
