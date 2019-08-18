@@ -86,7 +86,8 @@
 
     <div class="tile is-child box" v-for="time in city.timeline" @click="selectTimes(time.no)">
       <!-- <p style="text-align: left; float: left">{{ time.monthShort }} {{ time.day }} {{ time.ftime }} {{time.fday}} {{time.fdate}} {{time.fnice}}</p> -->
-      <p style="text-align: left; float: left">{{ time.fnice }} {{ time.fday }}</p>
+      <!-- <p style="text-align: left; float: left">{{ time.fnice }} <span class="tag is-light"> {{ time.fday }}</span></p> -->
+      <p style="text-align: left; float: left">{{ time.fnice }} <a class="button is-small"> {{ time.fday }}</a></p>
       <p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p>
 
     </div>
@@ -125,7 +126,8 @@
 -->
           <p>{{ city.city }}</p>
           <!-- <p>{{ city.monthShort }} {{ city.day }} {{ city.hour }}{{ city.ampm }}</p> -->
-          <p>{{ city.fnice }} {{ city.fday }}</p>
+          <!-- <p>{{ city.fnice }} {{ city.fday }}</p> -->
+          <p>{{ city.fnice }} <a class="button is-small"> {{ city.fday }}</a></p>
         </div>
       </div>
     </div>
