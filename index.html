@@ -10,11 +10,9 @@
 <!--  <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
   <script src="https://unpkg.com/spacetime"></script>
-  <link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./this.css" />
   <link rel="icon" href="/favicon.ico">
 </head>
-
 
 <!--
 <style>
@@ -30,44 +28,85 @@
 <!-- <body class="milkyWay"> -->
 <body>
 
-
-
 <div id="app">
 
-<div class="hero is-large is-dark has-background">
+<div class="hero is-medium is-dark has-background">
   <img class="hero-background is-transparent" src="https://source.unsplash.com/random/?landmark,city" />
-  <div class="hero-body">
-    <div class="container">
-      <div class="columns is-vcentered">
-        <div class="column">
-          <h1 class="title">World Timeline</h1>
-          <h3 class="subtitle" style="margin-bottom: 30px">Arranging a meeting in the world</h3>
-        </div>
+
+
+  <!-- Hero head: will stick at the top -->
+  <div class="hero-head">
+    <nav class="navbar">
+      <div class="container">
+
 <!--
-        <div class="column">
-          <div class="buttons has-addons is-pulled-right">
-            <span class="button" v-bind:class="intervals.one" @click="selectInterval('one')">1h</span>
-            <span class="button" v-bind:class="intervals.half" @click="selectInterval('half')">30min</span>
-            <span class="button" v-bind:class="intervals.quarter" @click="selectInterval('quarter')">15min</span>
-          </div>
+        <div class="navbar-brand">
+          <a class="navbar-item">
+            <img src="https://bulma.io/images/bulma-type-white.png" alt="Logo">
+          </a>
+          <span class="navbar-burger burger" data-target="navbarMenuHeroA">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
         </div>
 -->
+        <div id="navbarMenuHeroA" class="navbar-menu">
+          <div class="navbar-end">
+            <a class="navbar-item is-active">
+              Home
+            </a>
+            <a class="navbar-item">
+              Examples
+            </a>
+            <a class="navbar-item">
+              Documentation
+            </a>
+            <span class="navbar-item">
+              <a class="button is-dark is-inverted">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>Github</span>
+              </a>
+            </span>
+          </div>
+        </div>
       </div>
-    </div>
+    </nav>
+  </div>
+
+
+  <div class="hero-body">
     <div class="container">
-      <multiselect
-        v-model="selectedCities"
-        placeholder="city name?"
-        label="city" track-by="city_ascii"
-        :options="options"
-        :multiple="true"
-        :taggable="true"
-      ></multiselect>
+
+      <div class="columns is-vcentered">
+
+        <div class="column">
+          <h1 class="title">World Timeline</h1>
+          <h3 class="subtitle">Arranging a meeting in the world</h3>
+        </div>
+
+        <div class="column">
+          <multiselect
+            v-model="selectedCities"
+            placeholder="city name?"
+            label="city" track-by="city_ascii"
+            :options="options"
+            :multiple="true"
+            :taggable="true"
+          ></multiselect>
+        </div>
+
+      </div>
+
     </div>
+
   </div>
 </div>
 
 <section class="section">
+
 
       <div class="columns">
         <div class="column">
@@ -79,7 +118,7 @@
             <span class="button" v-bind:class="" @click="shiftWeek"><i class="fas fa-angle-double-right"></i></span>
           </div>
 
-          <div class="buttons has-addons is-pulled-right" style="margin-right: 30px;"> 
+          <div class="buttons has-addons"> 
             <span class="button" v-bind:class="intervals.one" @click="selectInterval('one')">1h</span>
             <span class="button" v-bind:class="intervals.half" @click="selectInterval('half')">30min</span>
             <span class="button" v-bind:class="intervals.quarter" @click="selectInterval('quarter')">15min</span>
@@ -88,8 +127,11 @@
         </div>
       </div> 
 
+</section>
+
+<section class="section">
 <div class="tile is-ancestor">
-  <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)">
+  <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="debug(city.city)">
 
     <div class="card-content">
       <div class="media">
@@ -115,6 +157,12 @@
 
 </div>
 </section>
+
+<!-- MODAL -->
+<div class="modal" v-bind:class="{'is-active': modalActive}">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <!-- Any other Bulma elements you want -->
 
 <section class="section">
   <p class="title">Meeting candidates</p>
@@ -159,6 +207,14 @@
   </table>
 </section>
 
+
+
+
+  </div>
+  <button class="modal-close is-large" aria-label="close" @click="modalSwitch();"></button>
+</div>
+
+
 <!--
 <section class="section">
   <pre class="language-json"><code>{{ spaceDate }}</code></pre>
@@ -186,7 +242,7 @@
 
 
 
-<a class="fabtn" @click="copyMeetings">
+<a class="fabtn" @click="copyMeetings(); modalSwitch();">
     <i class="far fa-calendar-check"></i>
 </a>
 
@@ -237,7 +293,6 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo,
 let el = createTimeline(st, 'Europe/London', 30)
 let at = createTimeline(st, 'Asia/Tokyo', 30)
 let al = createTimeline(st, 'America/Los_Angeles', 30)
-
 console.log(el, at, al)
 */
 
@@ -247,7 +302,6 @@ var vm = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
   data () {
     return {
-      //message: "Hello!",
       spaceDate: spacetime.now().nearest('hour'),
       selectedCities: [],
       options: cities,
@@ -259,7 +313,8 @@ var vm = new Vue({
         one: { "is-selected is-danger": false },
         half: { "is-selected is-danger": true },
         quarter: { "is-selected is-danger": false }
-      }
+      },
+      modalActive: false
     }
   },
   computed: {
@@ -271,6 +326,12 @@ var vm = new Vue({
     }
   },
   methods: {
+    debug: function (x) {
+      console.log(x)
+    },
+    modalSwitch: function () {
+      this.modalActive = !this.modalActive
+    },
     shiftDay: function () {
       vm.spaceDate = vm.spaceDate.add(1, 'day')
     },
