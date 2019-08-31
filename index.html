@@ -43,6 +43,7 @@
           <h1 class="title">World Timeline</h1>
           <h3 class="subtitle" style="margin-bottom: 30px">Arranging a meeting in the world</h3>
         </div>
+<!--
         <div class="column">
           <div class="buttons has-addons is-pulled-right">
             <span class="button" v-bind:class="intervals.one" @click="selectInterval('one')">1h</span>
@@ -50,6 +51,7 @@
             <span class="button" v-bind:class="intervals.quarter" @click="selectInterval('quarter')">15min</span>
           </div>
         </div>
+-->
       </div>
     </div>
     <div class="container">
@@ -66,8 +68,27 @@
 </div>
 
 <section class="section">
-<div class="tile is-ancestor">
 
+      <div class="columns">
+        <div class="column">
+
+          <div class="buttons has-addons is-pulled-right">
+            <span class="button" v-bind:class="" @click="unshiftWeek"><i class="fas fa-angle-double-left"></i></span>
+            <span class="button" v-bind:class="" @click="unshiftDay"><i class="fas fa-angle-left"></i></span>
+            <span class="button" v-bind:class="" @click="shiftDay"><i class="fas fa-angle-right"></i></span>
+            <span class="button" v-bind:class="" @click="shiftWeek"><i class="fas fa-angle-double-right"></i></span>
+          </div>
+
+          <div class="buttons has-addons is-pulled-right" style="margin-right: 30px;"> 
+            <span class="button" v-bind:class="intervals.one" @click="selectInterval('one')">1h</span>
+            <span class="button" v-bind:class="intervals.half" @click="selectInterval('half')">30min</span>
+            <span class="button" v-bind:class="intervals.quarter" @click="selectInterval('quarter')">15min</span>
+          </div>
+
+        </div>
+      </div> 
+
+<div class="tile is-ancestor">
   <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="select(city.city)">
 
     <div class="card-content">
@@ -177,7 +198,7 @@
 
 <script>
 
-st = spacetime.now().nearest('hour') // rounded to closest hour
+//st = spacetime.now().nearest('hour') // rounded to closest hour
 
 let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo, interval) => {
   spi = spaceTimeInstance.goto(timeZone);
@@ -226,8 +247,8 @@ var vm = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
   data () {
     return {
-      message: "Hello!",
-      spaceDate: st,
+      //message: "Hello!",
+      spaceDate: spacetime.now().nearest('hour'),
       selectedCities: [],
       options: cities,
       selectedTime: [],
@@ -244,14 +265,23 @@ var vm = new Vue({
   computed: {
     selectedCitiesWithTimeline: function () {
       return this.selectedCities.map((city) => {
-        city.timeline = createTimeline(st, city.timezone, 10, this.selectedTime, this.intervals.currentInterval)
+        city.timeline = createTimeline(this.spaceDate, city.timezone, 10, this.selectedTime, this.intervals.currentInterval)
         return city
       })
-    },
+    }
   },
   methods: {
-    select: function (itemname) {
-      //console.log(itemname)
+    shiftDay: function () {
+      vm.spaceDate = vm.spaceDate.add(1, 'day')
+    },
+    unshiftDay: function () {
+      vm.spaceDate = vm.spaceDate.subtract(1, 'day')
+    },
+    shiftWeek: function () {
+      vm.spaceDate = vm.spaceDate.add(1, 'week')
+    },
+    unshiftWeek: function () {
+      vm.spaceDate = vm.spaceDate.subtract(1, 'week')
     },
     selectTimes: function (timeId) {
       this.selectedCitiesWithTimeline.forEach(function(city) {
