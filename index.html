@@ -63,7 +63,7 @@
               Documentation
             </a>
             <span class="navbar-item">
-              <a class="button is-dark is-inverted">
+              <a class="button is-inverted">
                 <span class="icon">
                   <i class="fab fa-github"></i>
                 </span>
@@ -165,7 +165,7 @@
     <!-- Any other Bulma elements you want -->
 
 <section class="section">
-  <p class="title">Meeting candidates</p>
+  <p class="title modal-text">Meeting candidates</p>
   <table class="table is-narrow">
 <!--
     <thead>
@@ -178,7 +178,7 @@
 -->
     <tbody>
       <tr v-for="(opt, idx) in meetingsByNo">
-        <td style="vertical-align: middle;">Option {{ idx+1 }}</td>
+        <td style="vertical-align: middle;" class="modal-text">Option {{ idx+1 }}</td>
         <td v-for="city in opt">
 
     <div class="card-content">
@@ -193,10 +193,10 @@
           <p class="title is-5">{{ city.city }}</p>
           <p class="subtitle is-6"> {{ city.monthShort }} {{ city.day }} {{ city.hour }}{{ city.ampm }}</p>
 -->
-          <p>{{ city.city }}</p>
+          <p class="modal-text">{{ city.city }}</p>
           <!-- <p>{{ city.monthShort }} {{ city.day }} {{ city.hour }}{{ city.ampm }}</p> -->
           <!-- <p>{{ city.fnice }} {{ city.fday }}</p> -->
-          <p>{{ city.fnice }} <a class="button is-small"> {{ city.fday }}</a></p>
+          <p class="modal-text">{{ city.fnice }} <a class="button is-small is-outlined"> {{ city.fday }}</a></p>
         </div>
       </div>
     </div>

@@ -10,6 +10,14 @@ body {
   padding: 3rem 3rem;
 }
 
+.modal-text {
+  color: white;
+}
+
+.modal-content {
+  width: 90%;
+}
+
 /*
 .bd-notification {
   background-color: #f5f5f5;
