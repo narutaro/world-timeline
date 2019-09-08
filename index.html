@@ -221,6 +221,14 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo,
 };
 */
 
+/*
+Helper for pagination:
+ary = [1,2,3,4,5,6,7,8,9]
+dividedAry1 = ary.divide(4);
+console.log(dividedAry1); => [ [ 1, 2, 3, 4 ], [ 5, 6, 7, 8 ], [ 9 ] ]
+dividedAry2 = ary.divide(3);
+console.log(dividedAry2); => [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]
+*/
 Array.prototype.divide = function(n) {
   var ary = this;
   var idx = 0;
@@ -238,13 +246,6 @@ Array.prototype.divide = function(n) {
   return results;
 }
 
-//ary = [1,2,3,4,5,6,7,8,9]
-//dividedAry1 = ary.divide(4);
-//console.log(dividedAry1);
-// => [ [ 1, 2, 3, 4 ], [ 5, 6, 7, 8 ], [ 9 ] ]
-//dividedAry2 = ary.divide(3);
-//console.log(dividedAry2);
-// => [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]
 
 let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo, interval, cityObject) => {
   spi = spaceTimeInstance.goto(timeZone);
@@ -312,7 +313,7 @@ var vm = new Vue({
         quarter: { "is-selected is-danger": false }
       },
       modalActive: false,
-      currentPage: 0
+      currentPage: 0 // TODO: check if the page is more than 15days future or past day
     }
   },
   computed: {
@@ -346,30 +347,10 @@ var vm = new Vue({
     unshiftWeek: function () {
       vm.currentPage = vm.currentPage - 7
     },
-/* CHANGE */
-    chooseTimeSlot: function (time) {
-    //  console.log('chooseTimeSlot:', time)
-    },
     selectTimes: function (timeId) {
       this.cityTimeline.forEach(function(city) {
-        console.log('selectTimes:', city[0].city, 'timeId:', timeId)
-        vm.meetings.splice(0, 0, city[timeId])
-      })
-      //this.selectedTime.push(timeId)
-      //this.toggleSelectedTime(timeId)
-    },
-    toggleSelectedTime: function (timeId) {
-      let index = this.selectedTime.indexOf(timeId)
-      if (index !== -1) {
-        this.selectedTime.splice(index, 1) 
-      } else {
-        this.selectedTime.push(timeId)
-      }
-    },
-/* ORIGINAL
-    selectTimes: function (timeId) {
-      this.cityTimeline.forEach(function(city) {
-        console.log(city.city, city.timeline[timeId].hour)
+        console.log('selectTimes is called:', 'currentPage:', vm.currentPage, 'cityName', city[vm.currentPage][0].city, 'timeId:', timeId)
+        vm.meetings.splice(0, 0, city[vm.currentPage][timeId])
       })
       //this.selectedTime.push(timeId)
       this.toggleSelectedTime(timeId)
@@ -382,7 +363,6 @@ var vm = new Vue({
         this.selectedTime.push(timeId)
       }
     },
-*/
     copyMeetings: function () {
       // initialize meetings and meetingsByNo
       //this.meetings.splice(0); // https://jp.vuejs.org/v2/guide/list.html
