@@ -97,21 +97,21 @@
   <!-- TIMELINE -->
   <section class="section">
     <div class="tile is-ancestor">
-      <div class="tile is-parent is-vertical" v-for="city in selectedCitiesWithTimeline" @click="debug(city)">
+      <div class="tile is-parent is-vertical" v-for="city in cityTimeline" @click="debug(city)">
         <div class="card-content">
           <div class="media">
             <div class="media-left">
               <figure class="image">
-                <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/48.png'">
+                <img v-bind:src="'https://www.countryflags.io/' + city[0][0].iso2 + '/flat/48.png'">
               </figure>
             </div>
             <div class="media-content">
-              <p class="title is-5">{{ city.city }}</p>
-              <p class="subtitle is-6">{{ city.country }}</p>
+              <p class="title is-5">{{ city[0][0].city }}</p>
+              <p class="subtitle is-6">{{ city[0][0].country }}</p>
             </div>
           </div>
         </div>
-        <div class="tile is-child box" v-for="time in city.timeline" @click="selectTimes(time.no); chooseTimeSlot(time)">
+        <div class="tile is-child box" v-for="time in city[currentPage]" @click="selectTimes(time.no)">
           <p style="text-align: left; float: left">{{ time.fnice }} <a class="button is-small"> {{ time.fday }}</a></p>
           <p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p>
         </div>
@@ -170,8 +170,8 @@
     <pre class="language-json"><code>{{ selectedCities }}</code></pre>
   </section>
   <section class="section">
-    <p class="title">selectedCitiesWithTimeline</p>
-    <pre class="language-json"><code>{{ selectedCitiesWithTimeline }}</code></pre>
+    <p class="title">cityTimeline</p>
+    <pre class="language-json"><code>{{ cityTimeline }}</code></pre>
   </section>
 
   <!-- FAB -->
@@ -221,6 +221,31 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo,
 };
 */
 
+Array.prototype.divide = function(n) {
+  var ary = this;
+  var idx = 0;
+  var results = [];
+  var length = ary.length;
+
+  while (idx + n < length){
+    var result = ary.slice(idx,idx+n)
+    results.push(result);
+    idx = idx + n
+  }
+
+  var rest = ary.slice(idx,length+1)
+  results.push(rest)
+  return results;
+}
+
+//ary = [1,2,3,4,5,6,7,8,9]
+//dividedAry1 = ary.divide(4);
+//console.log(dividedAry1);
+// => [ [ 1, 2, 3, 4 ], [ 5, 6, 7, 8 ], [ 9 ] ]
+//dividedAry2 = ary.divide(3);
+//console.log(dividedAry2);
+// => [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]
+
 let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo, interval, cityObject) => {
   spi = spaceTimeInstance.goto(timeZone);
   let timeline = [...Array(daysToCreate)].map((_, i) => {
@@ -228,6 +253,7 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo,
       no: i,
       city: cityObject.city,
       country: cityObject.country,
+      iso2: cityObject.iso2,
       year: spi.format('year'),
       monthShort: spi.format('month-short'),
       dayOfTheWeekShort: spi.format('day-short'),
@@ -238,7 +264,11 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo,
       fnice: spi.format('nice'),
       selected: selectedTimeNo.includes(i) ? true : false
     }
-    
+
+    // the minimum interval is 15min 
+    spi = spi.add(15, 'minutes')
+
+/*    
     if (interval === 'one') {
       spi = spi.add(1, 'hour')
     } else if (interval === 'half') {
@@ -246,6 +276,7 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo,
     } else if (interval === 'quarter') {
       spi = spi.add(15, 'minutes')
     }
+*/
 
     return aDay
     //return spi.format('nice')
@@ -280,15 +311,20 @@ var vm = new Vue({
         half: { "is-selected is-danger": true },
         quarter: { "is-selected is-danger": false }
       },
-      modalActive: false
+      modalActive: false,
+      currentPage: 0
     }
   },
   computed: {
-    selectedCitiesWithTimeline: function () {
-      return this.selectedCities.map((city) => {
-        city.timeline = createTimeline(this.spaceDate, city.timezone, 10, this.selectedTime, this.intervals.currentInterval, city)
-        return city
+    cityTimeline: function () {
+      cts = this.selectedCities.map((city) => {
+        // time slots in a day = 15min * 4 * 24 = 96
+        // 1440 = 15min time slots in 15day
+        let ct = createTimeline(this.spaceDate, city.timezone, 1440, this.selectedTime, this.intervals.currentInterval, city)
+        return ct.divide(96)
       })
+      console.log(cts)
+      return cts
     }
   },
   methods: {
@@ -299,27 +335,28 @@ var vm = new Vue({
       this.modalActive = !this.modalActive
     },
     shiftDay: function () {
-      vm.spaceDate = vm.spaceDate.add(1, 'day')
+      vm.currentPage = vm.currentPage + 1
     },
     unshiftDay: function () {
-      vm.spaceDate = vm.spaceDate.subtract(1, 'day')
+      vm.currentPage = vm.currentPage - 1
     },
     shiftWeek: function () {
-      vm.spaceDate = vm.spaceDate.add(1, 'week')
+      vm.currentPage = vm.currentPage + 7
     },
     unshiftWeek: function () {
-      vm.spaceDate = vm.spaceDate.subtract(1, 'week')
+      vm.currentPage = vm.currentPage - 7
     },
 /* CHANGE */
     chooseTimeSlot: function (time) {
     //  console.log('chooseTimeSlot:', time)
     },
     selectTimes: function (timeId) {
-      this.selectedCitiesWithTimeline.forEach(function(city) {
-        console.log(city.city, city.timeline[timeId].fnice)
+      this.cityTimeline.forEach(function(city) {
+        console.log('selectTimes:', city[0].city, 'timeId:', timeId)
+        vm.meetings.splice(0, 0, city[timeId])
       })
       //this.selectedTime.push(timeId)
-      this.toggleSelectedTime(timeId)
+      //this.toggleSelectedTime(timeId)
     },
     toggleSelectedTime: function (timeId) {
       let index = this.selectedTime.indexOf(timeId)
@@ -331,7 +368,7 @@ var vm = new Vue({
     },
 /* ORIGINAL
     selectTimes: function (timeId) {
-      this.selectedCitiesWithTimeline.forEach(function(city) {
+      this.cityTimeline.forEach(function(city) {
         console.log(city.city, city.timeline[timeId].hour)
       })
       //this.selectedTime.push(timeId)
@@ -347,19 +384,19 @@ var vm = new Vue({
     },
 */
     copyMeetings: function () {
-      this.meetings.splice(0); // https://jp.vuejs.org/v2/guide/list.html
-      this.meetingsByNo.splice(0); // https://jp.vuejs.org/v2/guide/list.html
+      // initialize meetings and meetingsByNo
+      //this.meetings.splice(0); // https://jp.vuejs.org/v2/guide/list.html
+      //this.meetingsByNo.splice(0); // https://jp.vuejs.org/v2/guide/list.html
 
-      this.selectedCitiesWithTimeline.map(function(city){
-        city.timeline.filter(time => time.selected == true).map(function(date){
-          date['city'] = city.city 
-          date['country'] = city.country 
-          date['iso2'] = city.iso2
+      this.cityTimeline.map(function(city){
+        //city.timeline.filter(time => time.selected == true).map(function(date){
+        city.filter(time => time.selected == true).map(function(date){
+          console.log('date:', date)
           vm.meetings.splice(0, 0, date)
         })
       })
-      //console.log(this.meetings)
-      this.formatMeetings(this.meetings)
+      console.log(this.meetings)
+      //this.formatMeetings(this.meetings)
       //console.log(this.meetingsByNo)
     },
     formatMeetings: function(meetings) {
