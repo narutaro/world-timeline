@@ -163,7 +163,7 @@
   </section>
 
   <!-- FAB -->
-  <a class="fabtn" @click="copyMeetings(); modalSwitch();">
+  <a class="fabtn" @click="showMeetings(); modalSwitch();">
     <i class="far fa-calendar-check"></i>
   </a>
 
@@ -239,9 +239,9 @@ var vm = new Vue({
       meetings: [],
       meetingsByNo: [],
       intervals: { 
-        currentInterval: "half",
-        one: { "is-selected is-danger": false },
-        half: { "is-selected is-danger": true },
+        currentInterval: "one",
+        one: { "is-selected is-danger": true },
+        half: { "is-selected is-danger": false },
         quarter: { "is-selected is-danger": false }
       },
       modalActive: false,
@@ -288,7 +288,7 @@ var vm = new Vue({
     selectTimes: function (timeId) {
       this.cityTimeline.forEach(function(city) {
         console.log('selectTimes is called:', 'currentPage:', vm.currentPage, 'cityName', city[vm.currentPage][0].city, 'timeId:', timeId)
-        vm.meetings.splice(0, 0, city[vm.currentPage][timeId])
+        //vm.meetings.splice(0, 0, city[vm.currentPage][timeId])
       })
       //this.selectedTime.push(timeId)
       this.toggleSelectedTime(timeId)
@@ -301,17 +301,25 @@ var vm = new Vue({
         this.selectedTime.push(timeId)
       }
     },
-    copyMeetings: function () {
-      // initialize meetings and meetingsByNo
-      //this.meetings.splice(0); // https://jp.vuejs.org/v2/guide/list.html
-      //this.meetingsByNo.splice(0); // https://jp.vuejs.org/v2/guide/list.html
-
+    showMeetings: function () {
+    /*
+      Initialize meetings and meetingsByNo
+      this.meetings.splice(0);  https://jp.vuejs.org/v2/guide/list.html
+      this.meetingsByNo.splice(0);  https://jp.vuejs.org/v2/guide/list.html
+    */
       this.cityTimeline.map(function(city){
+      console.log(city)
+
+      // TODO - this.selectedTimeにあるidをcityTimelineから探してきてthis.meetingsに押し込む. idはcityごとにある.
+
+/*
         //city.timeline.filter(time => time.selected == true).map(function(date){
         city.filter(time => time.selected == true).map(function(date){
           console.log('date:', date)
           vm.meetings.splice(0, 0, date)
         })
+*/
+
       })
       console.log(this.meetings)
       //this.formatMeetings(this.meetings)
