@@ -13,18 +13,6 @@
     <link rel="icon" href="/favicon.ico">
   </head>
 
-<!--
-<style>
-.underTheEarth {
-  background-image: -webkit-radial-gradient(50% 150%, #787B7D 5%, #4B5052 100%);
-  background-image: radial-gradient(50% 150%, #787B7D 5%, #4B5052 100%); }
-.milkyWay {
-  background-image: -webkit-linear-gradient(bottom, #F4F4F4 0%, #DFDEDC 100%);
-  background-image: linear-gradient(to top, #F4F4F4 0%, #DFDEDC 100%); }
-</style>
--->
-
-<!-- <body class="milkyWay"> -->
 <body>
   <div id="app">
 
@@ -88,7 +76,7 @@
         <div class="buttons has-addons"> 
           <span class="button" v-bind:class="intervals.one" @click="selectInterval('one')">1h</span>
           <span class="button" v-bind:class="intervals.half" @click="selectInterval('half')">30min</span>
-          <span class="button" v-bind:class="intervals.quarter" @click="selectInterval('quarter')">15min</span>
+<!--          <span class="button" v-bind:class="intervals.quarter" @click="selectInterval('quarter')">15min</span> -->
         </div>
       </div>
     </div> 
@@ -185,50 +173,6 @@
 
 <script>
 
-//st = spacetime.now().nearest('hour') // rounded to closest hour
-/* ORIGINAL
-let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo, interval) => {
-  spi = spaceTimeInstance.goto(timeZone);
-  let timeline = [...Array(daysToCreate)].map((_, i) => {
-    let aDay = {
-      no: i,
-      year: spi.format('year'),
-      monthShort: spi.format('month-short'),
-      dayOfTheWeekShort: spi.format('day-short'),
-      day: spi.format('date'),
-      hour: spi.format('hour'),
-      ampm: spi.format('{ampm}'),
-      //ftime: spi.format('time'),
-      fday: spi.format('day-short'),
-      //fdate: spi.format('date-nice'),
-      fnice: spi.format('nice'),
-      selected: selectedTimeNo.includes(i) ? true : false
-    }
-    
-    if (interval === 'one') {
-      spi = spi.add(1, 'hour')
-    } else if (interval === 'half') {
-      spi = spi.add(30, 'minutes') 
-    } else if (interval === 'quarter') {
-      spi = spi.add(15, 'minutes')
-    }
-
-    return aDay
-    //return spi.format('nice')
-    //console.log(i, spaceTimeInstance.format('nice'))
-  })
-  return timeline
-};
-*/
-
-/*
-Helper for pagination:
-ary = [1,2,3,4,5,6,7,8,9]
-dividedAry1 = ary.divide(4);
-console.log(dividedAry1); => [ [ 1, 2, 3, 4 ], [ 5, 6, 7, 8 ], [ 9 ] ]
-dividedAry2 = ary.divide(3);
-console.log(dividedAry2); => [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ] ]
-*/
 Array.prototype.divide = function(n) {
   var ary = this;
   var idx = 0;
@@ -247,7 +191,7 @@ Array.prototype.divide = function(n) {
 }
 
 
-let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo, interval, cityObject) => {
+let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo, cityObject) => {
   spi = spaceTimeInstance.goto(timeZone);
   let timeline = [...Array(daysToCreate)].map((_, i) => {
     let aDay = {
@@ -266,18 +210,7 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo,
       selected: selectedTimeNo.includes(i) ? true : false
     }
 
-    // the minimum interval is 15min 
-    spi = spi.add(15, 'minutes')
-
-/*    
-    if (interval === 'one') {
-      spi = spi.add(1, 'hour')
-    } else if (interval === 'half') {
-      spi = spi.add(30, 'minutes') 
-    } else if (interval === 'quarter') {
-      spi = spi.add(15, 'minutes')
-    }
-*/
+    spi = spi.add(30, 'minutes')
 
     return aDay
     //return spi.format('nice')
@@ -303,7 +236,6 @@ var vm = new Vue({
       selectedCities: [],
       options: cities,
       selectedTime: [], // array of selected timeline id. it needs to change when time-interval(1h, 30min, 15min) is changed
-      //timeSlotChosen: [],
       meetings: [],
       meetingsByNo: [],
       intervals: { 
@@ -319,10 +251,16 @@ var vm = new Vue({
   computed: {
     cityTimeline: function () {
       cts = this.selectedCities.map((city) => {
-        // time slots in a day = 15min * 4 * 24 = 96
-        // 1440 = 15min time slots in 15day
-        let ct = createTimeline(this.spaceDate, city.timezone, 1440, this.selectedTime, this.intervals.currentInterval, city)
-        return ct.divide(96)
+        // 720 * 30min = 15days
+        let ct = createTimeline(this.spaceDate, city.timezone, 720, this.selectedTime, city)
+        if (this.intervals.currentInterval === 'one') {
+          // show only XX:00
+          ct = ct.filter((time, idx) => idx % 2 == 0 )
+          return ct.divide(24)
+        } else {
+          // show XX:00 and XX:30
+          return ct.divide(48)
+        }
       })
       console.log(cts)
       return cts
@@ -393,6 +331,9 @@ var vm = new Vue({
       
       this.intervals.currentInterval = selectedInterval
       Object.keys(this.intervals).map((i) => this.intervals[i]["is-selected is-danger"] = selectedInterval === i ? true : false)
+      
+      console.log('currentInterval', this.intervals.currentInterval)
+      
     }
   }
 })
