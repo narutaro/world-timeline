@@ -302,28 +302,21 @@ var vm = new Vue({
       }
     },
     showMeetings: function () {
-    /*
-      Initialize meetings and meetingsByNo
-      this.meetings.splice(0);  https://jp.vuejs.org/v2/guide/list.html
-      this.meetingsByNo.splice(0);  https://jp.vuejs.org/v2/guide/list.html
-    */
+
+      //Initialize meetings and meetingsByNo
+      this.meetings.splice(0);
+      this.meetingsByNo.splice(0);
+
       this.cityTimeline.map(function(city){
-      console.log(city)
-
-      // TODO - this.selectedTimeにあるidをcityTimelineから探してきてthis.meetingsに押し込む. idはcityごとにある.
-
-/*
-        //city.timeline.filter(time => time.selected == true).map(function(date){
-        city.filter(time => time.selected == true).map(function(date){
-          console.log('date:', date)
-          vm.meetings.splice(0, 0, date)
+        city.map(function(page){
+          page.map(function(time){
+            if (time.selected === true){
+              vm.meetings.splice(0, 0, time)
+            }
+          })
         })
-*/
-
       })
-      console.log(this.meetings)
-      //this.formatMeetings(this.meetings)
-      //console.log(this.meetingsByNo)
+      this.formatMeetings(this.meetings)
     },
     formatMeetings: function(meetings) {
       // group by time_number
@@ -334,8 +327,6 @@ var vm = new Vue({
       })
     },
     selectInterval: function(selectedInterval) {
-      // reset selected when time-interval is changed
-      this.selectedTime.length = 0 
       
       this.intervals.currentInterval = selectedInterval
       Object.keys(this.intervals).map((i) => this.intervals[i]["is-selected is-danger"] = selectedInterval === i ? true : false)
