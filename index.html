@@ -5,6 +5,8 @@
     <script src="./cities.top100.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.js"></script> -->
     <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css" />
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
@@ -82,6 +84,46 @@
     </div> 
   </section>
 
+<!-- STATIC TABLE
+
+<table class="table is-narrow">
+<tbody id="js-tbody">
+<tr><td class="modal-text" style="vertical-align: middle;">Option 1</td> <td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/CO/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Bogota</p> <p class="modal-text">Oct 6th, 6:00am <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AU/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Sydney</p> <p class="modal-text">Oct 6th, 10:00pm <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AR/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Buenos Aires</p> <p class="modal-text">Oct 6th, 8:00am <a class="button is-small">Sun</a></p></div></div></div></td></tr><tr><td class="modal-text" style="vertical-align: middle;">Option 2</td> <td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/CO/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Bogota</p> <p class="modal-text">Oct 6th, 5:00am <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AU/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Sydney</p> <p class="modal-text">Oct 6th, 9:00pm <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AR/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Buenos Aires</p> <p class="modal-text">Oct 6th, 7:00am <a class="button is-small">Sun</a></p></div></div></div></td></tr><tr><td class="modal-text" style="vertical-align: middle;">Option 3</td> <td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/CO/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Bogota</p> <p class="modal-text">Oct 6th, 4:00am <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AU/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Sydney</p> <p class="modal-text">Oct 6th, 8:00pm <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AR/flat/48.png"></figure></div><div class="media-content"><p class="modal-text">Buenos Aires</p> <p class="modal-text">Oct 6th, 6:00am <a class="button is-small">Sun</a></p></div></div></div></td></tr>
+</tbody>
+</table>
+<a class="button" v-on:click="copyToClipboard">Copy to clipboard</a>
+
+-->
+
+<!-- IN THE SAME PAGE -->
+      <section class="section">
+        <p class="title">Meeting candidates</p>
+        <table class="table is-narrow">
+          <tbody id="js-tbody">
+            <tr v-for="(opt, idx) in meetingsByNo">
+              <td style="vertical-align: middle;">Option {{ idx+1 }}</td>
+              <td v-for="city in opt">
+                <div class="card-content">
+                  <div class="media">
+                    <div class="media-left">
+                      <figure class="image">
+                        <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/48.png'">
+                      </figure>
+                    </div>
+                    <div class="media-content">
+                      <p>{{ city.city }}</p>
+                      <p>{{ city.fnice }} <a class="button is-small">{{ city.fday }}</a></p>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <a class="button" v-on:click="copyToClipboard">Copy to clipboard</a>
+      </section>
+
+
   <!-- TIMELINE -->
   <section class="section">
     <div class="tile is-ancestor">
@@ -107,14 +149,14 @@
     </div>
   </section>
 
-  <!-- MODAL -->
+  <!-- MODAL
   <div class="modal" v-bind:class="{'is-active': modalActive}">
     <div class="modal-background"></div>
     <div class="modal-content">
       <section class="section">
         <p class="title modal-text">Meeting candidates</p>
         <table class="table is-narrow">
-          <tbody>
+          <tbody id="js-tbody">
             <tr v-for="(opt, idx) in meetingsByNo">
               <td style="vertical-align: middle;" class="modal-text">Option {{ idx+1 }}</td>
               <td v-for="city in opt">
@@ -127,7 +169,7 @@
                     </div>
                     <div class="media-content">
                       <p class="modal-text">{{ city.city }}</p>
-                      <p class="modal-text">{{ city.fnice }} <a class="button is-small is-outlined"> {{ city.fday }}</a></p>
+                      <p class="modal-text">{{ city.fnice }} <a class="button is-small">{{ city.fday }}</a></p>
                     </div>
                   </div>
                 </div>
@@ -135,10 +177,13 @@
             </tr>
           </tbody>
         </table>
+      <a class="button" v-on:click="copyToClipboard">Copy to clipboard</a>
+      <button v-on:click="copyToClipboard">ctc</button>
       </section>
     </div>
     <button class="modal-close is-large" aria-label="close" @click="modalSwitch();"></button>
   </div>
+  -->
 
   <!-- DEBUG -->
   <section class="section">
@@ -163,7 +208,8 @@
   </section>
 
   <!-- FAB -->
-  <a class="fabtn" @click="showMeetings(); modalSwitch();">
+  <!-- <a class="fabtn" @click="showMeetings(); modalSwitch();"> -->
+  <a class="fabtn" @click="showMeetings">
     <i class="far fa-calendar-check"></i>
   </a>
 
@@ -226,7 +272,6 @@ let al = createTimeline(st, 'America/Los_Angeles', 30)
 console.log(el, at, al)
 */
 
-
 var vm = new Vue({
   el: '#app',
   components: { Multiselect: window.VueMultiselect.default },
@@ -245,7 +290,10 @@ var vm = new Vue({
         quarter: { "is-selected is-danger": false }
       },
       modalActive: false,
-      currentPage: 0 // TODO: check if the page is more than 15days future or past day
+      currentPage: 0, // TODO: check if the page is more than 15days future or past day
+      // for copying to clipboard
+      //jsonData: { id: 1, "name": "taro", "items": ["note", "pen", "eraser"] },
+      //yamlData: ''
     }
   },
   computed: {
@@ -267,11 +315,29 @@ var vm = new Vue({
     }
   },
   methods: {
+    copyToClipboard: function() {
+ 
+      console.log('ctc called')
+
+      //var $button = document.getElementById('copy-button');
+      var $tbody = document.getElementById('js-tbody');
+      //console.log($button)
+      console.log($tbody)
+
+      var range = document.createRange();
+      range.selectNodeContents($tbody); 
+      console.log(range)
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      window.getSelection().removeRange(range);
+
+    },
     debug: function (x) {
     //  console.log('DEBUG:', x)
     },
     modalSwitch: function () {
       this.modalActive = !this.modalActive
+      console.log("modal switch called")
     },
     shiftDay: function () {
       vm.currentPage = vm.currentPage + 1
