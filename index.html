@@ -6,7 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.css" />
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
@@ -84,18 +84,15 @@
     </div> 
   </section>
 
-<!-- STATIC TABLE
+  <section>
+    <div>
+      <textarea v-model="stringData" type="text"></textarea>
+      <button class="btn" :data-clipboard-text="stringData">Copy</button>
+      <!-- <button class="btn" @click="add">Add</button> -->
+    </div>
+  </section>
 
-<table class="table is-narrow">
-<tbody id="js-tbody">
-<tr><td class="modal-text" style="vertical-align: middle;">Option 1</td> <td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/CO/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Bogota</p> <p class="modal-text">Oct 6th, 6:00am <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AU/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Sydney</p> <p class="modal-text">Oct 6th, 10:00pm <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AR/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Buenos Aires</p> <p class="modal-text">Oct 6th, 8:00am <a class="button is-small">Sun</a></p></div></div></div></td></tr><tr><td class="modal-text" style="vertical-align: middle;">Option 2</td> <td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/CO/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Bogota</p> <p class="modal-text">Oct 6th, 5:00am <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AU/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Sydney</p> <p class="modal-text">Oct 6th, 9:00pm <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AR/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Buenos Aires</p> <p class="modal-text">Oct 6th, 7:00am <a class="button is-small">Sun</a></p></div></div></div></td></tr><tr><td class="modal-text" style="vertical-align: middle;">Option 3</td> <td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/CO/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Bogota</p> <p class="modal-text">Oct 6th, 4:00am <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AU/flat/48.png"></figure></div> <div class="media-content"><p class="modal-text">Sydney</p> <p class="modal-text">Oct 6th, 8:00pm <a class="button is-small">Sun</a></p></div></div></div></td><td><div class="card-content"><div class="media"><div class="media-left"><figure class="image"><img src="https://www.countryflags.io/AR/flat/48.png"></figure></div><div class="media-content"><p class="modal-text">Buenos Aires</p> <p class="modal-text">Oct 6th, 6:00am <a class="button is-small">Sun</a></p></div></div></div></td></tr>
-</tbody>
-</table>
-<a class="button" v-on:click="copyToClipboard">Copy to clipboard</a>
-
--->
-
-<!-- IN THE SAME PAGE -->
+<!-- IN THE SAME PAGE
       <section class="section">
         <p class="title">Meeting candidates</p>
         <table class="table is-narrow">
@@ -122,6 +119,7 @@
         </table>
         <a class="button" v-on:click="copyToClipboard">Copy to clipboard</a>
       </section>
+-->
 
 
   <!-- TIMELINE -->
@@ -195,6 +193,10 @@
     <pre class="language-json"><code>{{ meetingsByNo }}</code></pre>
   </section>
   <section class="section">
+    <p class="title">formattedData</p>
+    <pre class="language-json"><code>{{ formattedData }}</code></pre>
+  </section>
+  <section class="section">
     <p class="title">selectedTime</p>
     <pre class="language-json"><code>{{ selectedTime }}</code></pre>
   </section>
@@ -218,6 +220,21 @@
 
 
 <script>
+
+var clipboard = new ClipboardJS('.btn');
+
+clipboard.on('success', function(e) {
+  console.info('Action:', e.action);
+  console.info('Text:', e.text);
+  console.info('Trigger:', e.trigger);
+  e.clearSelection();
+});
+
+clipboard.on('error', function(e) {
+  console.error('Action:', e.action);
+  console.error('Trigger:', e.trigger);
+});
+
 
 Array.prototype.divide = function(n) {
   var ary = this;
@@ -312,10 +329,24 @@ var vm = new Vue({
       })
       console.log(cts)
       return cts
+    },
+    stringData: function() {
+      let json = JSON.stringify(this.meetingsByNo)
+      let doc = jsyaml.load(json)
+      return jsyaml.safeDump(doc)
+    },
+    formattedData: function () {
+      let out = {}
+      this.meetingsByNo.forEach(function(option, index) {
+        out['option' + (index + 1)] = option
+      })
+      return out
+      //console.log('out:', out)
     }
   },
   methods: {
     copyToClipboard: function() {
+/*
  
       console.log('ctc called')
 
@@ -330,6 +361,7 @@ var vm = new Vue({
       window.getSelection().addRange(range);
       document.execCommand('copy');
       window.getSelection().removeRange(range);
+*/
 
     },
     debug: function (x) {
@@ -389,7 +421,8 @@ var vm = new Vue({
       const nos = [...new Set(meetings.map(date => date.no))]
       nos.map(function(i) {
         let dates = vm.meetings.filter(date => i == date.no)
-        vm.meetingsByNo.push(dates)
+        //vm.meetingsByNo.push(dates) // does not work for clipboard copy probably because it is not reactive
+        vm.meetingsByNo.splice(0, 0, dates)
       })
     },
     selectInterval: function(selectedInterval) {
