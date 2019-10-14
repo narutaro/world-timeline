@@ -26,17 +26,17 @@
         <div class="container">
           <div id="navbarMenuHeroA" class="navbar-menu">
             <div class="navbar-end">
+<!--
               <a class="navbar-item is-active">Home</a>
               <a class="navbar-item">Examples</a>
-              <a class="navbar-item">Documentation</a>
               <span class="navbar-item">
                 <a class="button is-inverted">
-                  <span class="icon">
-                    <i class="fab fa-github"></i>
-                  </span>
-                  <span>Github</span>
+                  <span class="icon"><i class="fab fa-github"></i></span> <span>Github</span>
                 </a>
               </span>
+-->
+              <a class="navbar-item" href="https://github.com/narutaro/world-timeline">Documentation</a>
+              <a class="navbar-item" href="https://github.com/narutaro/world-timeline"><span class="icon"><i class="fab fa-github"></i></span><span>Github</span></a>
             </div>
           </div>
         </div>
@@ -84,44 +84,6 @@
     </div> 
   </section>
 
-  <section>
-    <div>
-      <textarea v-model="stringData" type="text"></textarea>
-      <button class="btn" :data-clipboard-text="stringData">Copy</button>
-      <!-- <button class="btn" @click="add">Add</button> -->
-    </div>
-  </section>
-
-<!-- IN THE SAME PAGE
-      <section class="section">
-        <p class="title">Meeting candidates</p>
-        <table class="table is-narrow">
-          <tbody id="js-tbody">
-            <tr v-for="(opt, idx) in meetingsByNo">
-              <td style="vertical-align: middle;">Option {{ idx+1 }}</td>
-              <td v-for="city in opt">
-                <div class="card-content">
-                  <div class="media">
-                    <div class="media-left">
-                      <figure class="image">
-                        <img v-bind:src="'https://www.countryflags.io/' + city.iso2 + '/flat/48.png'">
-                      </figure>
-                    </div>
-                    <div class="media-content">
-                      <p>{{ city.city }}</p>
-                      <p>{{ city.fnice }} <a class="button is-small">{{ city.fday }}</a></p>
-                    </div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <a class="button" v-on:click="copyToClipboard">Copy to clipboard</a>
-      </section>
--->
-
-
   <!-- TIMELINE -->
   <section class="section">
     <div class="tile is-ancestor">
@@ -141,13 +103,13 @@
         </div>
         <div class="tile is-child box" v-for="time in city[currentPage]" @click="selectTimes(time.no)">
           <p style="text-align: left; float: left">{{ time.fnice }} <a class="button is-small"> {{ time.fday }}</a></p>
-          <p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p>
+          <!--<p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p> -->
+          <p style="text-align: right" v-show="time.selected" class="has-text-danger"><i class="fas fa-check"></i></p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- MODAL
   <div class="modal" v-bind:class="{'is-active': modalActive}">
     <div class="modal-background"></div>
     <div class="modal-content">
@@ -167,7 +129,8 @@
                     </div>
                     <div class="media-content">
                       <p class="modal-text">{{ city.city }}</p>
-                      <p class="modal-text">{{ city.fnice }} <a class="button is-small">{{ city.fday }}</a></p>
+                      <!-- <p class="modal-text">{{ city.fnice }} <a class="button is-small">{{ city.fday }}</a></p> -->
+                      <p class="modal-text">{{ city.fnice }} {{ city.fday }}</p>
                     </div>
                   </div>
                 </div>
@@ -175,15 +138,13 @@
             </tr>
           </tbody>
         </table>
-      <a class="button" v-on:click="copyToClipboard">Copy to clipboard</a>
-      <button v-on:click="copyToClipboard">ctc</button>
+      <a class="button copy-target" :data-clipboard-text="formattedData">Copy to clipboard</a>
       </section>
     </div>
     <button class="modal-close is-large" aria-label="close" @click="modalSwitch();"></button>
   </div>
-  -->
 
-  <!-- DEBUG -->
+  <!-- DEBUG
   <section class="section">
     <p class="title">meetings</p>
     <pre class="language-json"><code>{{ meetings }}</code></pre>
@@ -208,10 +169,10 @@
     <p class="title">cityTimeline</p>
     <pre class="language-json"><code>{{ cityTimeline }}</code></pre>
   </section>
+  -->
 
   <!-- FAB -->
-  <!-- <a class="fabtn" @click="showMeetings(); modalSwitch();"> -->
-  <a class="fabtn" @click="showMeetings">
+  <a class="fabtn" @click="showMeetings(); modalSwitch();">
     <i class="far fa-calendar-check"></i>
   </a>
 
@@ -221,7 +182,7 @@
 
 <script>
 
-var clipboard = new ClipboardJS('.btn');
+var clipboard = new ClipboardJS('.copy-target');
 
 clipboard.on('success', function(e) {
   console.info('Action:', e.action);
@@ -235,6 +196,11 @@ clipboard.on('error', function(e) {
   console.error('Trigger:', e.trigger);
 });
 
+function jsonToYaml(json) {
+ let jString = JSON.stringify(json)
+ let doc = jsyaml.load(jString)
+ return jsyaml.safeDump(doc)
+}
 
 Array.prototype.divide = function(n) {
   var ary = this;
@@ -252,7 +218,6 @@ Array.prototype.divide = function(n) {
   results.push(rest)
   return results;
 }
-
 
 let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo, cityObject) => {
   spi = spaceTimeInstance.goto(timeZone);
@@ -308,9 +273,6 @@ var vm = new Vue({
       },
       modalActive: false,
       currentPage: 0, // TODO: check if the page is more than 15days future or past day
-      // for copying to clipboard
-      //jsonData: { id: 1, "name": "taro", "items": ["note", "pen", "eraser"] },
-      //yamlData: ''
     }
   },
   computed: {
@@ -330,40 +292,19 @@ var vm = new Vue({
       console.log(cts)
       return cts
     },
-    stringData: function() {
-      let json = JSON.stringify(this.meetingsByNo)
-      let doc = jsyaml.load(json)
-      return jsyaml.safeDump(doc)
-    },
     formattedData: function () {
-      let out = {}
+      let options = {}
       this.meetingsByNo.forEach(function(option, index) {
-        out['option' + (index + 1)] = option
+        cityTime = {}
+        option.forEach(function(city){
+          cityTime[city.city] = city.fnice
+        })
+        options["Option " + (index + 1)] = cityTime
       })
-      return out
-      //console.log('out:', out)
+      return jsonToYaml(options)
     }
   },
   methods: {
-    copyToClipboard: function() {
-/*
- 
-      console.log('ctc called')
-
-      //var $button = document.getElementById('copy-button');
-      var $tbody = document.getElementById('js-tbody');
-      //console.log($button)
-      console.log($tbody)
-
-      var range = document.createRange();
-      range.selectNodeContents($tbody); 
-      console.log(range)
-      window.getSelection().addRange(range);
-      document.execCommand('copy');
-      window.getSelection().removeRange(range);
-*/
-
-    },
     debug: function (x) {
     //  console.log('DEBUG:', x)
     },
@@ -400,11 +341,10 @@ var vm = new Vue({
       }
     },
     showMeetings: function () {
-
       //Initialize meetings and meetingsByNo
       this.meetings.splice(0);
       this.meetingsByNo.splice(0);
-
+      
       this.cityTimeline.map(function(city){
         city.map(function(page){
           page.map(function(time){
