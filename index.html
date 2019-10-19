@@ -13,7 +13,7 @@
 </script>
 
     <title>Timeline</title>
-    <script src="./cities.top100.js"></script>
+    <script src="./city-population-more-than-2m.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/3.13.1/js-yaml.js"></script>
@@ -112,7 +112,8 @@
             </div>
           </div>
         </div>
-        <div class="tile is-child box" v-for="time in city[currentPage]" @click="selectTimes(time.no)">
+        <div class="tile is-child box" v-bind:class="isWorkTime(time.hourtf)" v-for="time in city[currentPage]" @click="selectTimes(time.no)"> 
+        <!-- <div class="tile is-child box" v-for="time in city[currentPage]" @click="selectTimes(time.no)"> -->
           <p style="text-align: left; float: left">{{ time.fnice }} <a class="button is-small"> {{ time.fday }}</a></p>
           <!--<p style="text-align: right" v-show="time.selected"><i class="far fa-calendar-check"></i></p> -->
           <p style="text-align: right" v-show="time.selected" class="has-text-danger"><i class="fas fa-check"></i></p>
@@ -179,7 +180,7 @@
   <section class="section">
     <p class="title">cityTimeline</p>
     <pre class="language-json"><code>{{ cityTimeline }}</code></pre>
-  </section>
+  </section> 
   -->
 
   <!-- FAB -->
@@ -193,6 +194,7 @@
 
 <script>
 
+// Copy to clipboard
 var clipboard = new ClipboardJS('.copy-target');
 
 clipboard.on('success', function(e) {
@@ -207,12 +209,14 @@ clipboard.on('error', function(e) {
   console.error('Trigger:', e.trigger);
 });
 
+// JSON to YAML
 function jsonToYaml(json) {
  let jString = JSON.stringify(json)
  let doc = jsyaml.load(jString)
  return jsyaml.safeDump(doc)
 }
 
+// Divide for pagination
 Array.prototype.divide = function(n) {
   var ary = this;
   var idx = 0;
@@ -230,6 +234,7 @@ Array.prototype.divide = function(n) {
   return results;
 }
 
+// Create timeline
 let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo, cityObject) => {
   spi = spaceTimeInstance.goto(timeZone);
   let timeline = [...Array(daysToCreate)].map((_, i) => {
@@ -246,7 +251,8 @@ let createTimeline = (spaceTimeInstance, timeZone, daysToCreate, selectedTimeNo,
       ampm: spi.format('{ampm}'),
       fday: spi.format('day-short'),
       fnice: spi.format('nice'),
-      selected: selectedTimeNo.includes(i) ? true : false
+      selected: selectedTimeNo.includes(i) ? true : false,
+      hourtf: spi.hour()
     }
 
     spi = spi.add(30, 'minutes')
@@ -318,6 +324,13 @@ var vm = new Vue({
   methods: {
     debug: function (x) {
     //  console.log('DEBUG:', x)
+    },
+    isWorkTime: function(hour) {
+      if (8 < hour && hour < 18) {
+        return "bg-worktime";
+      } else {
+        return "bg-non-worktime";
+      }
     },
     modalSwitch: function () {
       this.modalActive = !this.modalActive

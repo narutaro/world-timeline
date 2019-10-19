@@ -1,9 +1,6 @@
-body {
-/* font-family: 'Oswald', sans-serif; */
-}
-
 .box {
-  radius: 0px;
+  border-radius: 0px;
+  padding: 1rem;
 }
 
 .section {
@@ -18,40 +15,18 @@ body {
   width: 90%;
 }
 
-/*
-.bd-notification {
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  color: #7a7a7a;
-  font-weight: 600;
-  padding: 1.25rem 0;
-  position: relative;
-  text-align: center;
-}
-*/
-
-/*
-.multiselect.valid .multiselect__tags,
-.multiselect.valid .multiselect__tags span,
-.multiselect.valid .multiselect__tags input {
-  background:red;
-}
-*/
-
-/*
-.multiselect__tag {
-  background: hsl(348, 100%, 61%);
+.bg-worktime {
+  background-color: hsl(0, 0%, 98%);
 }
 
-.multiselect__option--highlight {
-  background: hsl(348, 100%, 61%);
+.bg-non-worktime {
+  background-color: hsl(0, 0%, 29%);
+  color: white;
 }
 
-.multiselect__option--selected.multiselect__option--highlight {
-  background: hsl(0, 0%, 29%);
-  color: #fff;
+.bg-evening {
+  background-color: #12a1c0;
 }
-*/
 
 .multiselect__tags {
   font-size: 16px;
