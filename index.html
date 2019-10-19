@@ -326,8 +326,12 @@ var vm = new Vue({
     //  console.log('DEBUG:', x)
     },
     isWorkTime: function(hour) {
-      if (8 < hour && hour < 18) {
+      let workTime = [9, 10, 11, 12, 13, 14, 15, 16, 17]
+      let grayZoneTime = [6, 7, 8, 18, 19, 20]
+      if (workTime.indexOf(hour) !== -1) {
         return "bg-worktime";
+      } else if (grayZoneTime.indexOf(hour) !== -1) {
+        return "bg-gray-zone-time"
       } else {
         return "bg-non-worktime";
       }

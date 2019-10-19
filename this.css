@@ -24,8 +24,9 @@
   color: white;
 }
 
-.bg-evening {
-  background-color: #12a1c0;
+.bg-gray-zone-time {
+  background-color: hsl(0, 0%, 71%);
+  color: white;
 }
 
 .multiselect__tags {
