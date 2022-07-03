@@ -86,3 +86,8 @@
 .hero-background.is-transparent {
   opacity: 0.3;
 }
+
+/* flag image */
+.image {
+  width: 64px
+}
